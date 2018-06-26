@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Filesystem\Filesystem;
 
 class WorksController extends Controller
 {
 
     protected $workBasePath;
+
+    /**
+     * Filesystem Instance
+     *
+     * @var Filesystem
+     */
+    protected $files;
 
     /**
      * Create a new controller instance.
@@ -18,6 +26,7 @@ class WorksController extends Controller
     {
         $this->middleware('auth');
         $this->workBasePath = env('WORK_DIR');
+        $this->files = new Filesystem();
     }
 
     /**
@@ -27,18 +36,26 @@ class WorksController extends Controller
      */
     public function index()
     {
-        $worksFolder = \opendir($this->workBasePath);
+        $worksFolder = $this->files->files($this->workBasePath);
         $works = [];
 
-        while (($file = readdir($worksFolder)) !== false) {
-            // TODO: Read file for date
+        foreach ($worksFolder as $file) {
             $fileExtension = '.blade.md';
-            if (strpos($file, $fileExtension) !== false) {
-                $works[] = ['name' => rtrim($file, '.blade.md'), 'date' => ''];
+            $fileName = str_replace($this->workBasePath, '', $file->getFileName());
+
+            // TODO: Figure out a "caching" strategy for file contents
+            // $fileContents = $this->files->get($file);
+            // $fileContents = substr($fileContents, stripos($fileContents, '---', 0), strrpos($fileContents, '---', 0));
+            // $fileContents = trim($fileContents, '---');
+            // $fileSettings = explode("\n", $fileContents);
+            // $works[] = $fileSettings;
+
+            if (strpos($fileName, $fileExtension) !== false) {
+                // TODO: Read file for date
+                $works[] = ['name' => rtrim($fileName, '.blade.md'), 'date' => ''];
             }
         }
 
-        \closedir($worksFolder);
         return view('dashboard')->with('works', $works);
     }
 
