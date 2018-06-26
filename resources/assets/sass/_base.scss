@@ -1,0 +1,27 @@
+/**
+ * Base Stylings
+ */
+
+* {
+  font-family: $default-font;
+  color: $grey;
+}
+
+html, body{
+  margin: 0;
+  padding: 0;
+  background-color: $white;
+}
+
+#app{
+  width: 100%;
+}
+
+main {
+  width: 75%;
+  margin: 5rem auto 0;
+}
+
+ul{
+  padding: 0;
+}

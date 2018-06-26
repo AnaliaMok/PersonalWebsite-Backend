@@ -1,0 +1,28 @@
+.nav{
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background-color: $blue;
+
+  &__list{
+    margin: 0;
+    list-style: none;
+
+    li {
+      display: inline-block;
+      color: $white;
+      a {
+        
+        padding: 0.5rem;
+        color: $white;
+      }
+    }
+
+    &--right {
+      margin-left: auto;
+    }
+  }
+}
