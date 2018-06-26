@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 
 class WorksController extends Controller
 {
+
+    protected $workBasePath;
+
     /**
      * Create a new controller instance.
      *
@@ -14,6 +17,7 @@ class WorksController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->workBasePath = 'C:\\xampp\\htdocs\\personal-web\\source\\_works\\';
     }
 
     /**
@@ -23,7 +27,19 @@ class WorksController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $worksFolder = \opendir($this->workBasePath);
+        $works = [];
+
+        while (($file = readdir($worksFolder)) !== false) {
+            // TODO: Read file for date
+            $fileExtension = '.blade.md';
+            if (strpos($file, $fileExtension) !== false) {
+                $works[] = ['name' => rtrim($file, '.blade.md'), 'date' => ''];
+            }
+        }
+
+        \closedir($worksFolder);
+        return view('dashboard')->with('works', $works);
     }
 
     /**
