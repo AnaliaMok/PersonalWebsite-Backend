@@ -17,7 +17,7 @@ class WorksController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->workBasePath = 'C:\\xampp\\htdocs\\personal-web\\source\\_works\\';
+        $this->workBasePath = env('WORK_DIR');
     }
 
     /**
