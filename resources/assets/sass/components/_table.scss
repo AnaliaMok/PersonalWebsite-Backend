@@ -1,0 +1,45 @@
+/**
+ * Standard Table Styling
+ */
+
+.table {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+
+  &__row {
+    list-style: none;
+    margin: 0;
+    flex: 1 1 100%;
+    overflow: hidden;
+    display: flex;
+
+    &--equal-half {
+      li {
+        width: 50%;
+
+        &:last-child {
+          border-left: none;
+        }
+      }
+    }
+  }
+
+  &__cell {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: 1px solid $grey;
+    border-top: none;
+
+    &--header {
+      padding: 0.75rem 0.5rem;
+      color: $white;
+      border: none;
+    }
+  }
+
+  &__header {
+    background-color: $blue;
+  }
+
+}
