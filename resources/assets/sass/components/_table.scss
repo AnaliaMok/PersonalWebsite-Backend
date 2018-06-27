@@ -14,14 +14,30 @@
     overflow: hidden;
     display: flex;
 
+    @media screen and (max-width: $desktop){
+      list-style-type: disc;
+    }
+
     &--equal-half {
       li {
         width: 50%;
 
         &:last-child {
           border-left: none;
+          @media screen and (max-width: $desktop){
+            border-left: 1px solid $grey;
+            border-bottom: 1px solid $grey;
+          }
+        }
+
+        @media screen and(max-width: $desktop){
+          border-bottom: none;
         }
       }
+    }
+
+    @media screen and (max-width: $desktop){
+      flex-wrap: wrap;
     }
   }
 
@@ -34,12 +50,22 @@
       display: block;
       padding: 0.5rem;
       text-decoration: none;
+
+      @media screen and (max-width: $desktop){
+        &::before{
+          content: '\25CF ';
+        }
+      }
     }
 
     &--header {
       padding: 0.75rem 0.5rem;
       color: $white;
       border: none;
+    }
+
+    @media screen and(max-width: $desktop){
+      width: 100%;
     }
   }
 
