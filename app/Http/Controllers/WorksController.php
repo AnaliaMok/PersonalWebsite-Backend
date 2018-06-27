@@ -79,8 +79,9 @@ class WorksController extends Controller
                 $workItem[$keyValuePair[0]] = trim($keyValuePair[1]);
             }
 
-            $workItem['slug'] = (isset($workItem['title'])) ? '/works/' . str_slug($workItem['title'], '-') : '/';
-            $works[$workItem['title']] = $workItem;
+            // Technically should never use false case
+            $workItem['slug'] = '/works/' . str_slug($workItem['title'], '-');
+            $works[str_slug($workItem['title'], '-')] = $workItem;
         }
 
         // By default, sort works by date DESC
@@ -164,7 +165,10 @@ class WorksController extends Controller
      */
     public function show($slug)
     {
-        return ($id);
+        if (isset($this->currentWork[$slug])) {
+            return view('work.index')->with('slug', $slug);
+        }
+        return 'Nope';
     }
 
     /**
