@@ -80,11 +80,11 @@ class WorksController extends Controller
             }
 
             $workItem['slug'] = (isset($workItem['title'])) ? '/works/' . str_slug($workItem['title'], '-') : '/';
-            $works[] = $workItem;
+            $works[$workItem['title']] = $workItem;
         }
 
         // By default, sort works by date DESC
-        usort($works, function ($a, $b) {
+        uasort($works, function ($a, $b) {
             $aDate = date_create($a['date']);
             $bDate = date_create($b['date']);
             return $bDate <=> $aDate;
@@ -159,12 +159,12 @@ class WorksController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  String $slug
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        return ($id);
     }
 
     /**

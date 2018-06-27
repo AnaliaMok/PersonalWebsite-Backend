@@ -2,11 +2,6 @@
 
 @section('content')
 <h2>This is the dashboard</h2>
-{{-- <ul>
-  @foreach($works as $work)
-    <li>{{ $work['title'] }}  {{ $work['date'] }}</li>
-  @endforeach
-</ul> --}}
 <div class="table">
   <ul class="table__row table__row--equal-half table__header">
     <li class="table__cell table__cell--header">Name</li>
