@@ -14,8 +14,8 @@
   </ul>
   @foreach($works as $work)
     <ul class="table__row table__row--equal-half">
-      <li class="table__cell">{{ $work['title'] }}</li>
-      <li class="table__cell">@php echo date_format(date_create($work['date']), 'F d, Y'); @endphp</li>
+      <li class="table__cell"><a href="{{ $work['slug'] }}">{{ $work['title'] }}</a></li>
+      <li class="table__cell"><a href="{{ $work['slug'] }}">@php echo date_format(date_create($work['date']), 'F d, Y'); @endphp</a></li>
     </ul>
   @endforeach
 </div>

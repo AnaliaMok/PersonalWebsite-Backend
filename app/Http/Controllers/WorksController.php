@@ -79,11 +79,18 @@ class WorksController extends Controller
                 $workItem[$keyValuePair[0]] = trim($keyValuePair[1]);
             }
 
+            $workItem['slug'] = (isset($workItem['title'])) ? '/works/' . str_slug($workItem['title'], '-') : '/';
             $works[] = $workItem;
         }
 
+        // By default, sort works by date DESC
+        usort($works, function ($a, $b) {
+            $aDate = date_create($a['date']);
+            $bDate = date_create($b['date']);
+            return $bDate <=> $aDate;
+        });
+
         $this->currentWork = $works;
-        return;
     }
 
     /**
@@ -98,6 +105,25 @@ class WorksController extends Controller
     }
 
     /**
+     * Retrieves total works for a given page
+     *
+     * @param integer $page Current page to retrieve
+     * @param integer $pageSize Total works to display
+     * @return Array subset of work items
+     */
+    protected function pagedWork($page = 1, $pageSize = 10)
+    {
+        $offset = ($page - 1) * $pageSize;
+
+        // TODO: json_encode when ajax request has been set
+        if (count($this->currentWork) <= $pageSize) {
+            return $this->currentWork;
+        }
+
+        return array_splice($this->currentWork, $offset, $pageSize);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -105,13 +131,6 @@ class WorksController extends Controller
     public function index()
     {
         $works = $this->currentWork;
-
-        // By default, sort works by date DESC
-        usort($works, function ($a, $b) {
-            $aDate = date_create($a['date']);
-            $bDate = date_create($b['date']);
-            return $bDate <=> $aDate;
-        });
 
         return view('dashboard')->with('works', $works);
     }
