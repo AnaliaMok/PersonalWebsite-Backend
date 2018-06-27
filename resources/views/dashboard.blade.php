@@ -5,11 +5,7 @@
 <ul>
   @foreach($works as $work)
     {{-- <li>{{ $work['name'] }}: {{ $work['date'] }}</li> --}}
-    <li>
-      @php
-        echo var_dump($work);
-      @endphp
-    </li>
+    <li>{{ $work['title'] }}  {{ $work['date'] }}</li>
   @endforeach
 </ul>
 @endsection

@@ -8,6 +8,11 @@ use Illuminate\Filesystem\Filesystem;
 class WorksController extends Controller
 {
 
+    /**
+     * Full path to static site files
+     *
+     * @var String
+     */
     protected $workBasePath;
 
     /**
@@ -16,6 +21,13 @@ class WorksController extends Controller
      * @var Filesystem
      */
     protected $files;
+
+    /**
+     * Current Work Pages
+     *
+     * @var Array
+     */
+    protected $currentWork;
 
     /**
      * Create a new controller instance.
@@ -27,6 +39,62 @@ class WorksController extends Controller
         $this->middleware('auth');
         $this->workBasePath = env('WORK_DIR');
         $this->files = new Filesystem();
+
+        $this->updateCurrentWork();
+    }
+
+    /**
+     * Updates currentWork array with current work pages in
+     * static site source
+     *
+     * @return void
+     */
+    protected function updateCurrentWork()
+    {
+        $worksFolder = $this->files->files($this->workBasePath);
+        $works = [];
+
+        foreach ($worksFolder as $file) {
+            $fileExtension = '.blade.md';
+            $fileName = str_replace($this->workBasePath, '', $file->getFileName());
+
+            // FUTURE TODO: Figure out a "caching" strategy for file contents
+            $fileContents = $this->files->get($file);
+            $fileContents = substr($fileContents, stripos($fileContents, '---', 0), strrpos($fileContents, '---', 0));
+            $fileContents = trim($fileContents, '---');
+            $fileSettings = explode("\n", $fileContents);
+
+            $workItem = [];
+            foreach ($fileSettings as $setting) {
+                if (strlen($setting) === 0) {
+                    continue;
+                }
+
+                $keyValuePair = explode(':', $setting);
+
+                if (count($keyValuePair) != 2) {
+                    continue;
+                }
+
+                $workItem[$keyValuePair[0]] = trim($keyValuePair[1]);
+            }
+
+            $works[] = $workItem;
+        }
+
+        $this->currentWork = $works;
+        return;
+    }
+
+    /**
+     * Determines if works directory has grown
+     *
+     * @return boolean true if file count has changed
+     */
+    protected function hasWorksUpdated()
+    {
+        $worksFolder = $this->files->files($this->workBasePath);
+        return count($worksFolder) !== count($this->currentWork);
     }
 
     /**
@@ -36,25 +104,14 @@ class WorksController extends Controller
      */
     public function index()
     {
-        $worksFolder = $this->files->files($this->workBasePath);
-        $works = [];
+        $works = $this->currentWork;
 
-        foreach ($worksFolder as $file) {
-            $fileExtension = '.blade.md';
-            $fileName = str_replace($this->workBasePath, '', $file->getFileName());
-
-            // TODO: Figure out a "caching" strategy for file contents
-            // $fileContents = $this->files->get($file);
-            // $fileContents = substr($fileContents, stripos($fileContents, '---', 0), strrpos($fileContents, '---', 0));
-            // $fileContents = trim($fileContents, '---');
-            // $fileSettings = explode("\n", $fileContents);
-            // $works[] = $fileSettings;
-
-            if (strpos($fileName, $fileExtension) !== false) {
-                // TODO: Read file for date
-                $works[] = ['name' => rtrim($fileName, '.blade.md'), 'date' => ''];
-            }
-        }
+        // By default, sort works by date DESC
+        usort($works, function ($a, $b) {
+            $aDate = date_create($a['date']);
+            $bDate = date_create($b['date']);
+            return $bDate <=> $aDate;
+        });
 
         return view('dashboard')->with('works', $works);
     }
